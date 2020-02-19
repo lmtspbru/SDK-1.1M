@@ -52,12 +52,11 @@
 #include "FreeRTOS.h"
 #include "task.h"
 #include "main.h"
-#include "usart.h"
 #include "cmsis_os.h"
 
 /* Private includes ----------------------------------------------------------*/
 /* USER CODE BEGIN Includes */     
-
+#include "usart.h"
 /* USER CODE END Includes */
 
 /* Private typedef -----------------------------------------------------------*/
@@ -79,17 +78,36 @@
 /* USER CODE BEGIN Variables */
 
 /* USER CODE END Variables */
-osThreadId defaultTaskHandle;
+osThreadId Task_LED1Handle;
+osThreadId Task_UARTHandle;
+osThreadId Task_LED2Handle;
 
 /* Private function prototypes -----------------------------------------------*/
 /* USER CODE BEGIN FunctionPrototypes */
    
 /* USER CODE END FunctionPrototypes */
 
-void StartDefaultTask(void const * argument);
-static void UARTThread(void const * argument);
+void StartTaskLED1(void const * argument);
+void StartTaskUART(void const * argument);
+void StartTasLED2(void const * argument);
 
 void MX_FREERTOS_Init(void); /* (MISRA C 2004 rule 8.1) */
+
+/* GetIdleTaskMemory prototype (linked to static allocation support) */
+void vApplicationGetIdleTaskMemory( StaticTask_t **ppxIdleTaskTCBBuffer, StackType_t **ppxIdleTaskStackBuffer, uint32_t *pulIdleTaskStackSize );
+
+/* USER CODE BEGIN GET_IDLE_TASK_MEMORY */
+static StaticTask_t xIdleTaskTCBBuffer;
+static StackType_t xIdleStack[configMINIMAL_STACK_SIZE];
+  
+void vApplicationGetIdleTaskMemory( StaticTask_t **ppxIdleTaskTCBBuffer, StackType_t **ppxIdleTaskStackBuffer, uint32_t *pulIdleTaskStackSize )
+{
+  *ppxIdleTaskTCBBuffer = &xIdleTaskTCBBuffer;
+  *ppxIdleTaskStackBuffer = &xIdleStack[0];
+  *pulIdleTaskStackSize = configMINIMAL_STACK_SIZE;
+  /* place for user code */
+}                   
+/* USER CODE END GET_IDLE_TASK_MEMORY */
 
 /**
   * @brief  FreeRTOS initialization
@@ -113,62 +131,90 @@ void MX_FREERTOS_Init(void) {
   /* start timers, add new ones, ... */
   /* USER CODE END RTOS_TIMERS */
 
-  /* Create the thread(s) */
-  /* definition and creation of defaultTask */
-  osThreadDef(defaultTask, StartDefaultTask, osPriorityNormal, 0, 128);
-  defaultTaskHandle = osThreadCreate(osThread(defaultTask), NULL);
-
-  /* USER CODE BEGIN RTOS_THREADS */
-  osThreadDef(UART_Thread, UARTThread, osPriorityNormal, 0, 128);
-  osThreadCreate(osThread(UART_Thread), NULL);
-  /* USER CODE END RTOS_THREADS */
-
   /* USER CODE BEGIN RTOS_QUEUES */
   /* add queues, ... */
   /* USER CODE END RTOS_QUEUES */
+
+  /* Create the thread(s) */
+  /* definition and creation of Task_LED1 */
+  osThreadDef(Task_LED1, StartTaskLED1, osPriorityNormal, 0, 128);
+  Task_LED1Handle = osThreadCreate(osThread(Task_LED1), NULL);
+
+  /* definition and creation of Task_UART */
+  osThreadDef(Task_UART, StartTaskUART, osPriorityNormal, 0, 128);
+  Task_UARTHandle = osThreadCreate(osThread(Task_UART), NULL);
+
+  /* definition and creation of Task_LED2 */
+  osThreadDef(Task_LED2, StartTasLED2, osPriorityNormal, 0, 128);
+  Task_LED2Handle = osThreadCreate(osThread(Task_LED2), NULL);
+
+  /* USER CODE BEGIN RTOS_THREADS */
+
+  /* USER CODE END RTOS_THREADS */
+
 }
 
-/* USER CODE BEGIN Header_StartDefaultTask */
+/* USER CODE BEGIN Header_StartTaskLED1 */
 /**
-  * @brief  Function implementing the defaultTask thread.
+  * @brief  Function implementing the Task_LED1 thread.
   * @param  argument: Not used 
   * @retval None
   */
-/* USER CODE END Header_StartDefaultTask */
-void StartDefaultTask(void const * argument)
+/* USER CODE END Header_StartTaskLED1 */
+void StartTaskLED1(void const * argument)
 {
+  /* USER CODE BEGIN StartTaskLED1 */
+  /* Infinite loop */
+  for(;;)
+  {
+	  HAL_GPIO_TogglePin(GPIOD, GPIO_PIN_15);
+	  osDelay(150);
+  }
+  /* USER CODE END StartTaskLED1 */
+}
 
-  /* USER CODE BEGIN StartDefaultTask */
+/* USER CODE BEGIN Header_StartTaskUART */
+/**
+* @brief Function implementing the Task_UART thread.
+* @param argument: Not used
+* @retval None
+*/
+/* USER CODE END Header_StartTaskUART */
+void StartTaskUART(void const * argument)
+{
+  /* USER CODE BEGIN StartTaskUART */
+  /* Infinite loop */
+	const char txt[] ="It just works\n";
+	for(;;)
+	  {
+		HAL_UART_Transmit(&huart1,txt,sizeof(txt)-1,100);
+		osDelay(950);
+	  }
+  /* USER CODE END StartTaskUART */
+}
+
+/* USER CODE BEGIN Header_StartTasLED2 */
+/**
+* @brief Function implementing the Task_LED2 thread.
+* @param argument: Not used
+* @retval None
+*/
+/* USER CODE END Header_StartTasLED2 */
+void StartTasLED2(void const * argument)
+{
+  /* USER CODE BEGIN StartTasLED2 */
   /* Infinite loop */
   for(;;)
   {
 	  HAL_GPIO_TogglePin(GPIOD, GPIO_PIN_13);
-	  HAL_Delay(500);
-	  HAL_GPIO_TogglePin(GPIOD, GPIO_PIN_13);
-	  HAL_Delay(500);
-	  HAL_GPIO_TogglePin(GPIOD, GPIO_PIN_14);
-	  HAL_Delay(500);
-	  HAL_GPIO_TogglePin(GPIOD, GPIO_PIN_14);
-	  HAL_Delay(500);
-	  HAL_GPIO_TogglePin(GPIOD, GPIO_PIN_14);
-	  HAL_Delay(500);
-	  HAL_GPIO_TogglePin(GPIOD, GPIO_PIN_14);
-	  HAL_Delay(500);
+	  osDelay(400);
   }
-  /* USER CODE END StartDefaultTask */
+  /* USER CODE END StartTasLED2 */
 }
 
 /* Private application code --------------------------------------------------*/
 /* USER CODE BEGIN Application */
-static void UARTThread(void const * argument)
-{
-	const char txt[] ="It just works\n";
-for(;;)
-  {
-    HAL_UART_Transmit(&huart1,txt,sizeof(txt),100);
-    HAL_Delay(2000);
-  }
-}
+
 /* USER CODE END Application */
 
 /************************ (C) COPYRIGHT STMicroelectronics *****END OF FILE****/
