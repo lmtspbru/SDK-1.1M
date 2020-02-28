@@ -8,7 +8,7 @@ void Buzzer_Init (void) {
 }
 
 void Buzzer_Set_Freq (uint16_t freq) {
-	TIM2->PSC = (84000000  / (2 * BUZZER_VOLUME_MAX * freq)) - 1;
+	TIM2->PSC = ((2 * HAL_RCC_GetPCLK1Freq()) / (2 * BUZZER_VOLUME_MAX * freq)) - 1;
 }
 
 void Buzzer_Set_Volume (uint16_t volume) {
