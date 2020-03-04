@@ -115,20 +115,20 @@ int main(void)
   while (1)
   {
     /* USER CODE END WHILE */
-	  HAL_GPIO_TogglePin(GPIOD, GPIO_PIN_13);
-	  HAL_Delay(500);
-	  HAL_GPIO_TogglePin(GPIOD, GPIO_PIN_13);
-	  HAL_Delay(500);
-	  HAL_GPIO_TogglePin(GPIOD, GPIO_PIN_14);
-	  HAL_Delay(500);
-	  HAL_GPIO_TogglePin(GPIOD, GPIO_PIN_14);
-	  HAL_Delay(500);
-	  HAL_GPIO_TogglePin(GPIOD, GPIO_PIN_15);
-	  HAL_Delay(500);
-	  HAL_GPIO_TogglePin(GPIOD, GPIO_PIN_15);
-	  HAL_Delay(500);
 
     /* USER CODE BEGIN 3 */
+	  HAL_GPIO_TogglePin(GPIOD, GPIO_PIN_13);
+	  HAL_Delay(500);
+	  HAL_GPIO_TogglePin(GPIOD, GPIO_PIN_13);
+	  HAL_Delay(500);
+	  HAL_GPIO_TogglePin(GPIOD, GPIO_PIN_14);
+	  HAL_Delay(500);
+	  HAL_GPIO_TogglePin(GPIOD, GPIO_PIN_14);
+	  HAL_Delay(500);
+	  HAL_GPIO_TogglePin(GPIOD, GPIO_PIN_15);
+	  HAL_Delay(500);
+	  HAL_GPIO_TogglePin(GPIOD, GPIO_PIN_15);
+	  HAL_Delay(500);
   }
   /* USER CODE END 3 */
 }
