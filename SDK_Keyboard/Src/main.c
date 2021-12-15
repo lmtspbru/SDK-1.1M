@@ -165,7 +165,7 @@ void SystemClock_Config(void)
 /* USER CODE BEGIN 4 */
 void KB_Test( void ) {
 	UART_Transmit( (uint8_t*)"KB test start\n" );
-	uint8_t R = 0, C = 0, L = 0, Row[4] = {0xF7, 0x7B, 0x3D, 0x1E}, Key, OldKey, OLED_Keys[12] = {0x30,0x30,0x30,0x30,0x30,0x30,0x30,0x30,0x30,0x30,0x30,0x30};
+	uint8_t R = 0, C = 0, L = 0, Row[4] = {ROW4, ROW3, ROW2, ROW1}, Key, OldKey, OLED_Keys[12] = {0x30,0x30,0x30,0x30,0x30,0x30,0x30,0x30,0x30,0x30,0x30,0x30};
 	oled_Reset();
 	oled_WriteString("From bottom to top", Font_7x10, White);
 	OLED_KB(OLED_Keys);
@@ -191,6 +191,7 @@ void KB_Test( void ) {
 				OLED_KB(OLED_Keys);
 			}
 		}
+		UART_Transmit( (uint8_t*)"Row complete\n" );
 		R = C = L = 0;
 		HAL_Delay(25);
 	}
