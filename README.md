@@ -60,12 +60,12 @@ source [find target/stm32f4x.cfg]
 - Установите libusb:
 `sudo apt-get install libusb-1.0-0`
 - Откройте файл:
-`sudo nano /etc/udev/rules.d/50-myusb.rules` или `sudo vi/etc/udev/rules.d/50-myusb.rules`
+`sudo nano /etc/udev/rules.d/50-myusb.rules` или `sudo vi /etc/udev/rules.d/50-myusb.rules`
 - Добавьте строку:
 `SUBSYSTEMS=="usb", ATTRS{idVendor}=="0403",
 ATTRS{idProduct}=="6010",TAG+="uaccess"`
 - Сохраните изменения
-- Ввести компнду: `sudo udevadm control —reload`
+- Ввести компнду: `sudo udevadm control --reload`
 - Переподключите SDK-1.1M к компьютеру
 ### Электронные ресурсы
 - [Учебное пособие](https://books.ifmo.ru/file/pdf/3031.pdf) – Техническая документация, лабораторные работы<br/>
