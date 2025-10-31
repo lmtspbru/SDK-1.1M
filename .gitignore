@@ -1,3 +1,5 @@
-/Debug
+.metadata/
+Debug/
+Release/
 *.log
 *.launch
